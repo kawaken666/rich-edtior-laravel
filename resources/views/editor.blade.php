@@ -1,32 +1,15 @@
-<!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+<x-app-layout>
+    <x-slot name="header">
+        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+            Editor
+        </h2>
+    </x-slot>
 
-    <title>Laravel Editor.js</title>
+    <form wire:submit.prevent="handleFileUpload" enctype="multipart/form-data">
+        <input type="file" wire:model="file" accept=".html">
+        <x-primary-button>アップロード</x-primary-button>
+    </form>
 
-    <!-- Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+    <div id="editorjs" class="bg-neutral-300 rounded-lg m-8 p-4"></div>
 
-    <!-- Styles -->
-    <style>
-        body {
-            font-family: 'Nunito', sans-serif;
-        }
-    </style>
-</head>
-<body class="antialiased">
-    <div id="editorjs"></div>
-
-    <!-- Scripts -->
-    <script src="{{ asset('js/app.js') }}"></script>
-    <script>
-        import EditorJS from '@editorjs/editorjs';
-
-        const editor = new EditorJS({
-            holder: 'editorjs'
-        });
-    </script>
-</body>
-</html>
+</x-app-layout>
