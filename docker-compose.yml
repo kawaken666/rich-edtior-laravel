@@ -1,0 +1,75 @@
+version: '3.9'
+
+# 永続化
+volumes:
+  db-store:
+
+services:
+  # PHP
+  app:
+    container_name: app_${APP_NAME}
+    #*# 【apache】を選択 #*#
+    # build:
+    # context: .
+    # dockerfile: ./.docker/app/apache/Dockerfile
+    # volumes:
+    #   - type: bind
+    #     source: ./
+    #     target: /var/www/app
+
+    #*# 【nginx】を選択 #*#
+    build:
+      context: .
+      dockerfile: ./.docker/app/nginx/Dockerfile
+    volumes:
+      - type: bind
+        source: ./
+        target: /app
+
+    ports:
+      - '${VITE_PORT:-5173}:${VITE_PORT:-5173}'
+      #*#（APP_PORT）Apache時のみ有効にする #*#
+      # - '${APP_PORT:-80}:80'
+    depends_on:
+      - db
+
+  #*# webサーバー(Nginxのみ有効にする。Apacheはwebを内包しているので不要) #*#
+  web:
+    container_name: nginx_${APP_NAME}
+    build:
+      context: .
+      dockerfile: ./.docker/web/Dockerfile
+    volumes:
+      - type: bind
+        source: ./
+        target: /app
+    ports:
+      - '${APP_PORT:-80}:80'
+    depends_on:
+      - app
+    restart: always
+
+  #*# データベース #*#
+  db:
+    container_name: db_${APP_NAME}
+    build:
+      context: .
+      dockerfile: ./.docker/db/mysql/Dockerfile
+    ports:
+      - '${DB_PORT:-3306}:3306'
+    volumes:
+      - type: volume
+        source: db-store
+        target: /var/lib/mysql
+        volume:
+          nocopy: true
+      - ./.docker/db/mysql/1_default.sql:/docker-entrypoint-initdb.d/1_default.sql
+    environment:
+      #.envを参照
+      MYSQL_ROOT_PASSWORD: '${DB_PASSWORD}'
+      MYSQL_ROOT_HOST: '%'
+      MYSQL_DATABASE: '${DB_DATABASE}'
+      MYSQL_USER: '${DB_USERNAME}'
+      MYSQL_PASSWORD: '${DB_PASSWORD}'
+      MYSQL_ALLOW_EMPTY_PASSWORD: 1
+
