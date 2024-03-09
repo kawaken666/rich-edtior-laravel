@@ -5,10 +5,7 @@
         </h2>
     </x-slot>
 
-    <form wire:submit.prevent="handleFileUpload" enctype="multipart/form-data">
-        <input type="file" wire:model="file" accept=".html">
-        <x-primary-button>アップロード</x-primary-button>
-    </form>
+    @livewire('html-uploader')
 
     <div id="editorjs" class="bg-neutral-300 rounded-lg m-8 p-4"></div>
 

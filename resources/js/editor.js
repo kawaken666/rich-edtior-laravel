@@ -39,7 +39,3 @@ let editor = new EditorJS({
         table: Table,
     }
 });
-
-window.addEventListener('livewire:load', function () {
-    editor.data = JSON.stringify(blocks);
-});
