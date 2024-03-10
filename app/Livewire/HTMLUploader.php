@@ -4,6 +4,7 @@ namespace App\Livewire;
 
 use Livewire\Component;
 use Livewire\WithFileUploads;
+use Symfony\Component\DomCrawler\Crawler;
 
 class HtmlUploader extends Component
 {
@@ -14,19 +15,25 @@ class HtmlUploader extends Component
     public $blocks;
 
     public function handleFileUpload() {
-        // アップロードされたファイルを一時ストレージに保存する
-        $this->file->store('uploads');
+        // アップロードされたHTMLを取得
+        $uploadFile = file_get_contents($this->file->getPathname());
 
-        // // HTMLをEditor.jsのブロック形式に変換
-        // $this->blocks = [
-        //     [
-        //         'type' => 'paragraph',
-        //         'data' => [
-        //             'text' => $this->file,
-        //         ],
-        //     ],
-        // ];
+        // DOMパーサーでHTMLを解析
+        $crawler = new Crawler($uploadFile);
+
+        // scriptタグを削除
+        $crawler->filter('script')->each(function ($node) {
+            $node->getNode(0)->parentNode->removeChild($node->getNode(0));
+        });
+
+        // styleタグを削除
+        $crawler->filter('style')->each(function ($node) {
+            $node->getNode(0)->parentNode->removeChild($node->getNode(0));
+        });
+
+        // 修正されたHTMLを取得
+        $modifiedHtml = $crawler->html();
         
-        $this->dispatch('file-uploaded');
+        $this->dispatch('file-uploaded', html: $modifiedHtml);
     }      
 }

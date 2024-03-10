@@ -5,8 +5,19 @@
         </h2>
     </x-slot>
 
+    {{-- Livewire埋め込み --}}
     @livewire('html-uploader')
 
-    <div id="editorjs" class="bg-neutral-300 rounded-lg m-8 p-4"></div>
+    <div id="editor">
+        {{-- ここにインポートしたHTMLのDOMを埋め込めばエディタに初期表示される --}}
+    </div>
 
+    <script>
+        // バックエンドで発火されたイベントをリスナーしてquillに反映
+        document.addEventListener('livewire:init', () => {
+            Livewire.on('htmlUploaded', function (html) {
+                quill.clipboard.dangerouslyPasteHTML(html);
+            })
+        })
+    </script>
 </x-app-layout>
