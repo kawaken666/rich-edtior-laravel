@@ -10,14 +10,7 @@
 
     <div id="editor">
         {{-- ここにインポートしたHTMLのDOMを埋め込めばエディタに初期表示される --}}
+
     </div>
 
-    <script>
-        // バックエンドで発火されたイベントをリスナーしてquillに反映
-        document.addEventListener('livewire:init', () => {
-            Livewire.on('htmlUploaded', function (html) {
-                quill.clipboard.dangerouslyPasteHTML(html);
-            })
-        })
-    </script>
 </x-app-layout>

@@ -34,6 +34,6 @@ class HtmlUploader extends Component
         // 修正されたHTMLを取得
         $modifiedHtml = $crawler->html();
         
-        $this->dispatch('file-uploaded', html: $modifiedHtml);
+        $this->dispatch('fileUploaded', html: $modifiedHtml);
     }      
 }
