@@ -10,13 +10,33 @@ class HtmlUploader extends Component
 {
     use WithFileUploads;
 
+    /**
+     * property
+     */
     public $file;
-    public $str;
-    public $blocks;
+    public $folder;
 
-    public function handleFileUpload() {
+    /**
+     * アップロードされたフォルダをエディタに反映できるように操作してイベントを発火する
+     */
+    public function handleFolderUpload() {
+        // dd($this->folder);
+        
+
+
+        // $tmpFolder = file_get_contents($this->folder->getPathname());
+
+        // $modifiedHtml = $this->formatHtmlForEditor($html);
+        
+        // $this->dispatch('folderUploaded', folder: $modifiedHtml);
+    } 
+
+    /**
+     * リッチエディタに反映できるようにHTMLを整形する
+     */
+    private function formatHtmlForEditor($file) {
         // アップロードされたHTMLを取得
-        $uploadFile = file_get_contents($this->file->getPathname());
+        $uploadFile = file_get_contents($file->getPathname());
 
         // DOMパーサーでHTMLを解析
         $crawler = new Crawler($uploadFile);
@@ -34,6 +54,6 @@ class HtmlUploader extends Component
         // 修正されたHTMLを取得
         $modifiedHtml = $crawler->html();
         
-        $this->dispatch('fileUploaded', html: $modifiedHtml);
+        return $modifiedHtml;
     }      
 }

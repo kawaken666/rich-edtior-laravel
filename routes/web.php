@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\EditorController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -24,5 +25,10 @@ Route::view('profile', 'profile')
     ->name('profile');
 
 Route::view('editor', 'editor');
-    
+Route::view('editorTest', 'editor-test');
+
+Route::get('/editorTest', [EditorController::class, 'index'])->name('editorTest');
+Route::post('/editorTest', [EditorController::class, 'upload'])->name('editorTest.upload');
+
+
 require __DIR__.'/auth.php';
