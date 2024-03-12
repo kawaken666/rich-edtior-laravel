@@ -15,6 +15,9 @@
 
     <div id="editor">
         {{-- ここにインポートしたHTMLのDOMを埋め込めばエディタに初期表示される --}}
+        @if (!empty($modified_html))
+            {!! $modified_html !!}
+        @endif
     </div>
 
 </x-app-layout>
