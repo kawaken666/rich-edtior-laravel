@@ -4,18 +4,19 @@ namespace App\Http\Controllers;
 
 use DOMDocument;
 use Illuminate\Http\Request;
-use Symfony\Component\DomCrawler\Crawler;
 
 class EditorController extends Controller
 {
     // 暫定ローカルストレージパス（あるべきは環境ごとにenvなどに外出し）
     const LOCAL_STORAGE_DIR = 'http://[::1]:5173/storage/app/';
 
-    public function index(){
-        return view('editor-test');
+    public function index()
+    {
+        return view('editor');
     }
 
-    public function upload(Request $request){
+    public function upload(Request $request)
+    {
         // アップされたUploadedFileインスタンスを取得
         $uploaded_file = $request->file('folders');
 
@@ -23,7 +24,7 @@ class EditorController extends Controller
         $upload_html = '';
 
         // 画像保存処理
-        for($i = 0; $i < count($uploaded_file); $i++){
+        for ($i = 0; $i < count($uploaded_file); $i++) {
             // 保存対象のMIME
             $save_MIME = ['image/jpeg', 'image/png', 'image/gif', 'image/bmp', 'image/tiff', 'image/webp', 'image/svg+xml'];
 
@@ -32,7 +33,7 @@ class EditorController extends Controller
 
             // 保存対象のMIMEの場合は保存する
             if (in_array($_FILES['folders']['type'][$i], $save_MIME)) {
-                
+
                 $uploaded_file[$i]->storeAs(dirname($_FILES['folders']['full_path'][$i]), $uploaded_file[$i]->getClientOriginalName());
             }
 
@@ -43,21 +44,22 @@ class EditorController extends Controller
         }
 
         // アップロードフォルダの第一階層ディレクトリ名を取得（HTMLファイルのimgタグのsrcをサーバー上のファイルを参照するよう修正するため）
-        $firstDirectory = explode("/", $_FILES['folders']['full_path'][0])[0];
+        $firstDirectory = explode('/', $_FILES['folders']['full_path'][0])[0];
 
         // ストレージパスを結合
-        $firstDirectory = self::LOCAL_STORAGE_DIR . $firstDirectory;
+        $firstDirectory = self::LOCAL_STORAGE_DIR.$firstDirectory;
 
         // HTMLを整形
         $modified_html = $this->formatHtmlForEditor($upload_html, $firstDirectory);
 
-        return view('editor-test', ['modified_html' => $modified_html]);
+        return view('editor', ['modified_html' => $modified_html]);
     }
 
     /**
      * HTMLを整形する
      */
-    private function formatHtmlForEditor($html, $firstDirectory) {
+    private function formatHtmlForEditor($html, $firstDirectory)
+    {
         // アップロードされたHTMLコンテンツを取得
         $content = file_get_contents($html->getPathname());
 
@@ -72,7 +74,7 @@ class EditorController extends Controller
         foreach ($imgs as $img) {
             $src = $img->getAttribute('src');
             // 新しいディレクトリパスをsrc属性に結合
-            $newSrc = $firstDirectory . '/' . $src;
+            $newSrc = $firstDirectory.'/'.$src;
             $img->setAttribute('src', $newSrc);
         }
 
@@ -85,8 +87,7 @@ class EditorController extends Controller
 
         // 先頭行のXML宣言を削除（XMLだとエディタ表示できない）
         $modified_html = preg_replace('/^.+\n/', '', $modified_html);
-        
+
         return $modified_html;
     }
 }
-
