@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::view('/', 'welcome');
+Route::view('/', 'editor');
 
 Route::view('dashboard', 'dashboard')
     ->middleware(['auth', 'verified'])
@@ -24,11 +24,7 @@ Route::view('profile', 'profile')
     ->middleware(['auth'])
     ->name('profile');
 
-Route::view('editor', 'editor');
-Route::view('editorTest', 'editor-test');
-
-Route::get('/editorTest', [EditorController::class, 'index'])->name('editorTest');
-Route::post('/editorTest', [EditorController::class, 'upload'])->name('editorTest.upload');
-
+Route::get('/editor', [EditorController::class, 'index'])->name('editor');
+Route::post('/editor', [EditorController::class, 'upload'])->name('editor.upload');
 
 require __DIR__.'/auth.php';
