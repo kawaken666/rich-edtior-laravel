@@ -2,14 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Content;
 use DOMDocument;
 use Illuminate\Http\Request;
 
 class EditorController extends Controller
 {
-    // 暫定ローカルストレージパス（あるべきは環境ごとにenvなどに外出し）
-    const LOCAL_STORAGE_DIR = 'http://[::1]:5173/storage/app/';
-
     public function index()
     {
         return view('editor');
@@ -17,6 +15,9 @@ class EditorController extends Controller
 
     public function upload(Request $request)
     {
+        // 画像のストレージ先
+        $STORAGE_URL = env('ASSET_URL').'/storage/app/';
+
         // アップされたUploadedFileインスタンスを取得
         $uploaded_file = $request->file('folders');
 
@@ -47,12 +48,21 @@ class EditorController extends Controller
         $firstDirectory = explode('/', $_FILES['folders']['full_path'][0])[0];
 
         // ストレージパスを結合
-        $firstDirectory = self::LOCAL_STORAGE_DIR.$firstDirectory;
+        $firstDirectory = $STORAGE_URL.$firstDirectory;
 
         // HTMLを整形
         $modified_html = $this->formatHtmlForEditor($upload_html, $firstDirectory);
 
         return view('editor', ['modified_html' => $modified_html]);
+    }
+
+    public function save(Request $request)
+    {
+        $content = new Content;
+        $content->content = $request->content;
+        $content->save();
+
+        return redirect()->route('editor');
     }
 
     /**

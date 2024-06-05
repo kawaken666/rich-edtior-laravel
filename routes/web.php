@@ -26,5 +26,6 @@ Route::view('profile', 'profile')
 
 Route::get('/editor', [EditorController::class, 'index'])->name('editor');
 Route::post('/editor', [EditorController::class, 'upload'])->name('editor.upload');
+Route::post('/editor/save', [EditorController::class, 'save'])->name('editor.save');
 
 require __DIR__.'/auth.php';

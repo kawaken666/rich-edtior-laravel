@@ -1,4 +1,4 @@
-<x-app-layout>
+<x-guest-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
             Editor
@@ -13,28 +13,42 @@
     </form>
 
     <div class="px-6 py-2">
-        {{-- <div id="toolbar" class="mb-4">
-            <!-- Add font size dropdown -->
-            <select class="ql-size">
-                <option value="small"></option>
-                <!-- Note a missing, thus falsy value, is used to reset to default -->
-                <option selected></option>
-                <option value="large"></option>
-                <option value="huge"></option>
-            </select>
-            <!-- Add a bold button -->
-            <button class="ql-bold"></button>
-            <!-- Add subscript and superscript buttons -->
-            <button class="ql-script" value="sub"></button>
-            <button class="ql-script" value="super"></button>
-        </div> --}}
-        <div id="editor" class="">
-            {{-- ここにインポートしたHTMLのDOMを埋め込めばエディタに初期表示される --}}
-            @if (!empty($modified_html))
-                {!! $modified_html !!}
-            @endif
+        <div class="w-[393px] h-[852px]">
+            <div id="editor" class="bg-white ">
+                {{-- ここにインポートしたHTMLのDOMを埋め込めばエディタに初期表示される --}}
+                @if (!empty($modified_html))
+                    {!! $modified_html !!}
+                @endif
+            </div>
         </div>
     </div>
 
+    <form method="POST" action="{{ route('editor.save') }}" id="submit-save" class="px-6 py-2">
+        @csrf
+        <input type="hidden" id="content" name="content" value="">
+        <x-primary-button>保存</x-primary-button>
+    </form>
 
-</x-app-layout>
+    <script type="module">
+        // TODO アセットのパスの環境差分の対応をする必要がある(https://stackoverflow.com/questions/75492352/how-to-change-vite-dev-server-asset-base-path)
+        // import { getEditorContentHTML } from '/resources/js/quill.js';
+        import {
+            getEditorContentHTML
+        } from 'http://[::1]:5173/resources/js/quill.js';
+
+        document.getElementById('submit-save').addEventListener('submit', function(event) {
+            // フォームの送信を停止
+            event.preventDefault();
+
+            // エディタのコンテンツをhiddenにセット
+            const content = getEditorContentHTML();
+            document.getElementById('content').value = content;
+
+            console.log(document.getElementById('content').value);
+
+            // フォームの送信を手動でトリガー
+            this.submit();
+        });
+    </script>
+
+</x-guest-layout>
